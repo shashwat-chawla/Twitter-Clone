@@ -33,7 +33,8 @@ const Login = () => {
           toast.success(res.data.message);
         }
       } catch (error) {
-        toast.success(error.response.data.message);
+        const message = error.response?.data?.message || "Unable to reach the server. Please try again.";
+        toast.error(message);
         console.log(error);
       }
     } else {
@@ -50,7 +51,8 @@ const Login = () => {
           toast.success(res.data.message);
         }
       } catch (error) {
-        toast.success(error.response.data.message);
+        const message = error.response?.data?.message || "Unable to reach the server. Please try again.";
+        toast.error(message);
         console.log(error);
       }
     }
@@ -89,4 +91,4 @@ const Login = () => {
   )
 }
 
-export default Login 
+export default Login

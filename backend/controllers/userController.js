@@ -2,6 +2,13 @@ import { User } from "../models/userSchema.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+const authCookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 24 * 60 * 60 * 1000,
+};
+
 export const Register = async (req, res) => {
     try {
         const { name, username, email, password } = req.body;
@@ -63,7 +70,7 @@ export const Login = async (req, res) => {
             userId: user._id
         }
         const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET, { expiresIn: "1d" });
-        return res.status(201).cookie("token", token, { expiresIn: "1d", httpOnly: true }).json({
+        return res.status(201).cookie("token", token, authCookieOptions).json({
             message: `Welcome back ${user.name}`,
             user,
             success: true
@@ -73,7 +80,7 @@ export const Login = async (req, res) => {
     }
 }
 export const logout = (req, res) => {
-    return res.cookie("token", "", { expiresIn: new Date(Date.now()) }).json({
+    return res.clearCookie("token", authCookieOptions).json({
         message: "user logged out successfully.",
         success: true
     })
